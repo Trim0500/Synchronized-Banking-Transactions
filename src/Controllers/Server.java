@@ -237,7 +237,7 @@ public class Server extends Thread {
         }
         setNumberOfAccounts(i);			/* Record the number of accounts processed */
 
-        /* System.out.println("\n DEBUG : Server.initializeAccounts() " + getNumberOfAccounts() + " accounts processed"); */
+         System.out.println("\n DEBUG : Server.initializeAccounts() " + getNumberOfAccounts() + " accounts processed");
 
         inputStream.close( );
     }
@@ -271,7 +271,7 @@ public class Server extends Thread {
     {   int accIndex;             	/* Index position of account to update */
         double newBalance; 		/* Updated account balance */
 
-        /* System.out.println("\n DEBUG : Server.processTransactions() " + getServerThreadId() ); */
+         System.out.println("\n DEBUG : Server.processTransactions() " + getServerThreadId() );
 
         /* Process the accounts until the client disconnects */
         processOuterLoop:
@@ -288,7 +288,7 @@ public class Server extends Thread {
 
             if (!Network.getInBufferStatus().equals("empty"))
             {
-                /* System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber()); */
+                 System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber());
 
                 Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
 
@@ -300,7 +300,7 @@ public class Server extends Thread {
                     trans.setTransactionBalance(newBalance);
                     trans.setTransactionStatus("done");
 
-                    /* System.out.println("\n DEBUG : Server.processTransactions() - Deposit of " + trans.getTransactionAmount() + " in account " + trans.getAccountNumber()); */
+                     System.out.println("\n DEBUG : Server.processTransactions() - Deposit of " + trans.getTransactionAmount() + " in account " + trans.getAccountNumber());
                 }
                 else
                     /* Process withdraw operation */
@@ -310,7 +310,7 @@ public class Server extends Thread {
                         trans.setTransactionBalance(newBalance);
                         trans.setTransactionStatus("done");
 
-                        /* System.out.println("\n DEBUG : Server.processTransactions() - Withdrawal of " + trans.getTransactionAmount() + " from account " + trans.getAccountNumber()); */
+                         System.out.println("\n DEBUG : Server.processTransactions() - Withdrawal of " + trans.getTransactionAmount() + " from account " + trans.getAccountNumber());
                     }
                     else
                         /* Process query operation */
@@ -320,7 +320,7 @@ public class Server extends Thread {
                             trans.setTransactionBalance(newBalance);
                             trans.setTransactionStatus("done");
 
-                            /* System.out.println("\n DEBUG : Server.processTransactions() - Obtaining balance from account" + trans.getAccountNumber()); */
+                             System.out.println("\n DEBUG : Server.processTransactions() - Obtaining balance from account" + trans.getAccountNumber());
                         }
 
 
@@ -329,14 +329,14 @@ public class Server extends Thread {
                     Thread.yield();		/* Yield the cpu if the network output buffer is full */
                 }
 
-                /* System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber()); */
+                 System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
 
                 Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
                 setNumberOfTransactions( (getNumberOfTransactions() +  1) ); 	/* Count the number of transactions processed */
             }
         }
 
-        /* System.out.println("\n DEBUG : Server.processTransactions() - " + getNumberOfTransactions() + " accounts updated"); */
+         System.out.println("\n DEBUG : Server.processTransactions() - " + getNumberOfTransactions() + " accounts updated");
 
         return true;
     }
@@ -428,16 +428,24 @@ public class Server extends Thread {
         long serverStartTime1 = 0;
         long serverEndTime1 = 0;
 
-        /* System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus()); */
-
         Transactions trans2 = new Transactions();
         long serverStartTime2 = 0;
         long serverEndTime2 = 0;
 
-        /* System.out.println("\n DEBUG : Server.run() - starting server thread " + objNetwork.getServerConnectionStatus()); */
+        if (getServerThreadId().equals("1")) {
+             System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
 
-        System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime2 - serverStartTime2) + " milliseconds");
+            processTransactions(trans1);
 
+            System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime1 - serverStartTime1) + " milliseconds");
+        }
+        else {
+             System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
+
+            processTransactions(trans2);
+
+            System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime2 - serverStartTime2) + " milliseconds");
+        }
     }
 }
 

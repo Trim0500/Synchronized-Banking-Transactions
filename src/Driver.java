@@ -8,6 +8,7 @@
 
 import Controllers.Client;
 import Controllers.Network;
+import Controllers.Server;
 
 /**
  *
@@ -27,6 +28,12 @@ public class Driver {
         objClient1.start();
         Client objClient2 = new Client("receiving");        /* Start the receiving client thread */
         objClient2.start();
+
+        Server objServer1 = new Server("1");
+        objServer1.start();
+
+        Server objServer2 = new Server("2");
+        objServer2.start();
     }
 
 }
