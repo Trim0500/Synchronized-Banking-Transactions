@@ -27,6 +27,7 @@ public class Network extends Thread {
     private static Transactions outGoingPacket[];              /* Outgoing network buffer */
     private static String inBufferStatus, outBufferStatus;     /* Current status of the network buffers - normal, full, empty */
     private static String networkStatus;                       /* Network status - active, inactive */
+    private static Semaphore semaphore = new Semaphore(2);
 
     /**
      * Constructor of the Network class
@@ -356,7 +357,7 @@ public class Network extends Thread {
      */
     public static boolean send(Transactions inPacket)
     {
-
+        /* Semaphore coordination here */
         inComingPacket[inputIndexClient].setAccountNumber(inPacket.getAccountNumber());
         inComingPacket[inputIndexClient].setOperationType(inPacket.getOperationType());
         inComingPacket[inputIndexClient].setTransactionAmount(inPacket.getTransactionAmount());
@@ -390,7 +391,7 @@ public class Network extends Thread {
      */
     public static boolean receive(Transactions outPacket)
     {
-
+        /* Semaphore coordination here */
         outPacket.setAccountNumber(outGoingPacket[outputIndexClient].getAccountNumber());
         outPacket.setOperationType(outGoingPacket[outputIndexClient].getOperationType());
         outPacket.setTransactionAmount(outGoingPacket[outputIndexClient].getTransactionAmount());
@@ -427,7 +428,7 @@ public class Network extends Thread {
      */
     public static boolean transferOut(Transactions outPacket)
     {
-
+        /* Semaphore coordination here */
         outGoingPacket[inputIndexServer].setAccountNumber(outPacket.getAccountNumber());
         outGoingPacket[inputIndexServer].setOperationType(outPacket.getOperationType());
         outGoingPacket[inputIndexServer].setTransactionAmount(outPacket.getTransactionAmount());
@@ -462,7 +463,7 @@ public class Network extends Thread {
      */
     public static boolean transferIn(Transactions inPacket)
     {
-
+        /* Semaphore coordination here */
         inPacket.setAccountNumber(inComingPacket[outputIndexServer].getAccountNumber());
         inPacket.setOperationType(inComingPacket[outputIndexServer].getOperationType());
         inPacket.setTransactionAmount(inComingPacket[outputIndexServer].getTransactionAmount());
