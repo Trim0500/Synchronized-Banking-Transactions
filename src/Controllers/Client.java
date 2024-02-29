@@ -158,7 +158,6 @@ public class Client extends Thread {
 
         while (i < getNumberOfTransactions())
         {
-
             while (Network.getInBufferStatus().equals("full"))
             {
                 Thread.yield(); 	/* Yield the cpu if the network input buffer is full */
@@ -169,7 +168,7 @@ public class Client extends Thread {
              System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber());
 
             Network.send(transaction[i]);                            /* Transmit current transaction */
-            i++;
+            ++i;
         }
 
     }
@@ -196,7 +195,7 @@ public class Client extends Thread {
              System.out.println("\n DEBUG : Client.receiveTransactions() - receiving updated transaction on account " + transact.getAccountNumber());
 
             System.out.println(transact);                               /* Display updated transaction */
-            i++;
+            ++i;
         }
     }
 
