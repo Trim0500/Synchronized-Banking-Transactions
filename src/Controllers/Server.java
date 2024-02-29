@@ -370,7 +370,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public double deposit(int i, double amount)
+    public synchronized double deposit(int i, double amount)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -400,7 +400,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public double withdraw(int i, double amount)
+    public synchronized double withdraw(int i, double amount)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -420,7 +420,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public double query(int i)
+    public synchronized double query(int i)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -467,9 +467,7 @@ public class Server extends Thread {
 
             serverEndTime1 = System.currentTimeMillis();
 
-            System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime1 - serverStartTime1) + " milliseconds");
-
-            Network.disconnect(Network.getServerIP());
+            System.out.println("\n Terminating server thread - " + getServerThreadId() + " Running time " + (serverEndTime1 - serverStartTime1) + " milliseconds");
         }
         else {
              System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
@@ -480,12 +478,12 @@ public class Server extends Thread {
 
             serverEndTime2 = System.currentTimeMillis();
 
-            System.out.println("\n Terminating server thread - " + " Running time " + (serverEndTime2 - serverStartTime2) + " milliseconds");
+            System.out.println("\n Terminating server thread - " + getServerThreadId() + " Running time " + (serverEndTime2 - serverStartTime2) + " milliseconds");
         }
 
-        /*if (getServerThreadRunningStatus1().equals("finished") && getServerThreadRunningStatus2().equals("finished")) {
+        if (getServerThreadRunningStatus1().equals("finished") && getServerThreadRunningStatus2().equals("finished")) {
             Network.disconnect(Network.getServerIP());
-        }*/
+        }
     }
 }
 
