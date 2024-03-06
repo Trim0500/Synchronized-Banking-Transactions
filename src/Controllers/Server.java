@@ -309,7 +309,12 @@ public class Server extends Thread {
 
              System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber());
 
-            Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
+            try {
+                Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
+            }
+            catch (InterruptedException exc) {
+                System.out.println("Main thread interrupted");
+            }
 
             accIndex = findAccount(trans.getAccountNumber());
             /* Process deposit operation */
@@ -353,7 +358,12 @@ public class Server extends Thread {
 
              System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
 
-            Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
+            try {
+                Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
+            }
+            catch (InterruptedException exc) {
+                System.out.println("Main thread interrupted");
+            }
             setNumberOfTransactions( (getNumberOfTransactions() +  1) ); 	/* Count the number of transactions processed */
         }
 
@@ -370,7 +380,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public synchronized double deposit(int i, double amount)
+    public double deposit(int i, double amount)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -400,7 +410,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public synchronized double withdraw(int i, double amount)
+    public double withdraw(int i, double amount)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */
@@ -420,7 +430,7 @@ public class Server extends Thread {
      */
 
     // Use synchronised keyword here
-    public synchronized double query(int i)
+    public double query(int i)
     {  double curBalance;      /* Current account balance */
 
         curBalance = account[i].getBalance( );          /* Get current account balance */

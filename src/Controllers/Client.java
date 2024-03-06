@@ -167,7 +167,13 @@ public class Client extends Thread {
 
              System.out.println("\n DEBUG : Client.sendTransactions() - sending transaction on account " + transaction[i].getAccountNumber());
 
-            Network.send(transaction[i]);                            /* Transmit current transaction */
+            try{
+                Network.send(transaction[i]);                            /* Transmit current transaction */
+            }
+            catch (InterruptedException exc) {
+                System.out.println("Parent thread interrupted");
+            }
+
             ++i;
         }
 
@@ -190,7 +196,12 @@ public class Client extends Thread {
                 Thread.yield(); 	/* Yield the cpu if the network output buffer is full */
             }
 
-            Network.receive(transact);                               	/* Receive updated transaction from the network buffer */
+            try {
+                Network.receive(transact);                               	/* Receive updated transaction from the network buffer */
+            }
+            catch (InterruptedException exc) {
+                System.out.println("Main thread interrupted");
+            }
 
              System.out.println("\n DEBUG : Client.receiveTransactions() - receiving updated transaction on account " + transact.getAccountNumber());
 
