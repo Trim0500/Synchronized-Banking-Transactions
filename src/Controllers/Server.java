@@ -31,6 +31,7 @@ public class Server extends Thread {
     private String serverThreadId;				 /* Identification of the two server threads - Thread1, Thread2 */
     private static String serverThreadRunningStatus1;	 /* Running status of thread 1 - idle, running, terminated */
     private static String serverThreadRunningStatus2;	 /* Running status of thread 2 - idle, running, terminated */
+    private static String serverThreadRunningStatus3;	 /* Running status of thread 2 - idle, running, terminated */
     private static Object critialSectionLock = new Object();
 
     /**
@@ -62,7 +63,12 @@ public class Server extends Thread {
         else
         {
             serverThreadId = stid;							/* unshared variable so each thread has its own copy */
-            serverThreadRunningStatus2 = "idle";
+            if (serverThreadId.equals("2")) {
+                serverThreadRunningStatus2 = "idle";
+            }
+            else {
+                serverThreadRunningStatus3 = "idle";
+            }
         }
     }
 
@@ -199,6 +205,28 @@ public class Server extends Thread {
     }
 
     /**
+     * Accessor method of Server class
+     *
+     * @return serverThreadRunningStatus2
+     * @param
+     */
+    public String getServerThreadRunningStatus3()
+    {
+        return serverThreadRunningStatus3;
+    }
+
+    /**
+     * Mutator method of Server class
+     *
+     * @return
+     * @param runningStatus
+     */
+    public void setServerThreadRunningStatus3(String runningStatus)
+    {
+        serverThreadRunningStatus3 = runningStatus;
+    }
+
+    /**
      * Initialization of the accounts from an input file
      *
      * @return
@@ -293,8 +321,11 @@ public class Server extends Thread {
                 if (serverThreadID.equals("1")) {
                     setServerThreadRunningStatus1("idle");
                 }
-                else {
+                else if (serverThreadID.equals("2")) {
                     setServerThreadRunningStatus2("idle");
+                }
+                else {
+                    setServerThreadRunningStatus3("idle");
                 }
 
                 Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
@@ -302,8 +333,11 @@ public class Server extends Thread {
                 if (serverThreadID.equals("1")) {
                     setServerThreadRunningStatus1("running");
                 }
-                else {
+                else if (serverThreadID.equals("2")) {
                     setServerThreadRunningStatus2("running");
+                }
+                else {
+                    setServerThreadRunningStatus3("running");
                 }
             }
 
@@ -349,11 +383,27 @@ public class Server extends Thread {
 
             while (Network.getOutBufferStatus().equals("full"))
             {
-                setServerThreadRunningStatus1("idle");
+                if (serverThreadID.equals("1")) {
+                    setServerThreadRunningStatus1("idle");
+                }
+                else if (serverThreadID.equals("2")) {
+                    setServerThreadRunningStatus2("idle");
+                }
+                else {
+                    setServerThreadRunningStatus3("idle");
+                }
 
-                Thread.yield();		/* Yield the cpu if the network output buffer is full */
+                Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
 
-                setServerThreadRunningStatus1("running");
+                if (serverThreadID.equals("1")) {
+                    setServerThreadRunningStatus1("running");
+                }
+                else if (serverThreadID.equals("2")) {
+                    setServerThreadRunningStatus2("running");
+                }
+                else {
+                    setServerThreadRunningStatus3("running");
+                }
             }
 
              System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
@@ -466,7 +516,13 @@ public class Server extends Thread {
         long serverStartTime2;
         long serverEndTime2 = 0;
 
+        Transactions trans3 = new Transactions();
+        long serverStartTime3;
+        long serverEndTime3 = 0;
+
         serverStartTime2 = System.currentTimeMillis();
+
+        serverStartTime3 = System.currentTimeMillis();
 
         if (getServerThreadId().equals("1")) {
              System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
@@ -479,7 +535,7 @@ public class Server extends Thread {
 
             System.out.println("\n Terminating server thread - " + getServerThreadId() + " Running time " + (serverEndTime1 - serverStartTime1) + " milliseconds");
         }
-        else {
+        else if (getServerThreadId().equals("2")) {
              System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
 
             processTransactions(trans2);
@@ -490,8 +546,21 @@ public class Server extends Thread {
 
             System.out.println("\n Terminating server thread - " + getServerThreadId() + " Running time " + (serverEndTime2 - serverStartTime2) + " milliseconds");
         }
+        else {
+            System.out.println("\n DEBUG : Server.run() - starting server thread " + getServerThreadId() + " " + Network.getServerConnectionStatus());
 
-        if (getServerThreadRunningStatus1().equals("finished") && getServerThreadRunningStatus2().equals("finished")) {
+            processTransactions(trans3);
+
+            setServerThreadRunningStatus3("finished");
+
+            serverEndTime3 = System.currentTimeMillis();
+
+            System.out.println("\n Terminating server thread - " + getServerThreadId() + " Running time " + (serverEndTime3 - serverStartTime3) + " milliseconds");
+        }
+
+        if (getServerThreadRunningStatus1().equals("finished") &&
+            getServerThreadRunningStatus2().equals("finished") &&
+            getServerThreadRunningStatus3().equals("finished")) {
             Network.disconnect(Network.getServerIP());
         }
     }
