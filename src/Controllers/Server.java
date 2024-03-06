@@ -344,11 +344,21 @@ public class Server extends Thread {
 
             while (Network.getOutBufferStatus().equals("full"))
             {
-                setServerThreadRunningStatus1("idle");
+                if (serverThreadID.equals("1")) {
+                    setServerThreadRunningStatus1("idle");
+                }
+                else {
+                    setServerThreadRunningStatus2("idle");
+                }
 
-                Thread.yield();		/* Yield the cpu if the network output buffer is full */
+                Thread.yield(); 	/* Yield the cpu if the network input buffer is empty */
 
-                setServerThreadRunningStatus1("running");
+                if (serverThreadID.equals("1")) {
+                    setServerThreadRunningStatus1("running");
+                }
+                else {
+                    setServerThreadRunningStatus2("running");
+                }
             }
 
              System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
