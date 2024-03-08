@@ -310,8 +310,6 @@ public class Server extends Thread {
         {
             while (Network.getInBufferStatus().equals("empty"))
             {
-                //System.out.println("Current number of transactions processed: " + getNumberOfTransactions());
-
                 if (Network.getClientConnectionStatus().equals("disconnected") || getNumberOfTransactions() == getNumberOfAccounts()) {
                     break processOuterLoop;
                 }
