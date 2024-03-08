@@ -437,6 +437,10 @@ public class Network extends Thread {
     {
         outBufferSemaphore.acquire();
 
+        if (getOutBufferStatus().equals("full")) {
+            return false;
+        }
+
         outGoingPacket[inputIndexServer].setAccountNumber(outPacket.getAccountNumber());
         outGoingPacket[inputIndexServer].setOperationType(outPacket.getOperationType());
         outGoingPacket[inputIndexServer].setTransactionAmount(outPacket.getTransactionAmount());
@@ -474,6 +478,10 @@ public class Network extends Thread {
     public static boolean transferIn(Transactions inPacket) throws InterruptedException
     {
         inBufferSemaphore.acquire();
+
+        if (getInBufferStatus().equals("empty")) {
+            return false;
+        }
 
         inPacket.setAccountNumber(inComingPacket[outputIndexServer].getAccountNumber());
         inPacket.setOperationType(inComingPacket[outputIndexServer].getOperationType());

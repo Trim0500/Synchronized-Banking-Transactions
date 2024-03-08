@@ -32,7 +32,6 @@ public class Server extends Thread {
     private static String serverThreadRunningStatus1;	 /* Running status of thread 1 - idle, running, terminated */
     private static String serverThreadRunningStatus2;	 /* Running status of thread 2 - idle, running, terminated */
     private static String serverThreadRunningStatus3;	 /* Running status of thread 2 - idle, running, terminated */
-    private static Object critialSectionLock = new Object();
 
     /**
      * Constructor method of Client class
@@ -284,9 +283,6 @@ public class Server extends Thread {
         /* Find account */
         while ( !(account[i].getAccountNumber().equals(accNumber))) {
             i++;
-            if (i > 70) {
-                System.out.println("i is too big! The account couldn't be found! accNumber: " + accNumber);
-            }
         }
         if (i == getNumberOfAccounts())
             return -1;
@@ -344,7 +340,13 @@ public class Server extends Thread {
              System.out.println("\n DEBUG : Server.processTransactions() - transferring in account " + trans.getAccountNumber());
 
             try {
-                Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
+                boolean success = Network.transferIn(trans);                              /* Transfer a transaction from the network input buffer */
+
+                if (!success) {
+                    Thread.yield();
+
+                    continue;
+                }
             }
             catch (InterruptedException exc) {
                 System.out.println("Main thread interrupted");
@@ -409,7 +411,13 @@ public class Server extends Thread {
              System.out.println("\n DEBUG : Server.processTransactions() - transferring out account " + trans.getAccountNumber());
 
             try {
-                Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
+                boolean success = Network.transferOut(trans);                            		/* Transfer a completed transaction from the server to the network output buffer */
+
+                if (!success) {
+                    Thread.yield();
+
+                    continue;
+                }
             }
             catch (InterruptedException exc) {
                 System.out.println("Main thread interrupted");
