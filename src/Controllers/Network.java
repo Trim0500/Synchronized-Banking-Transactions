@@ -438,6 +438,8 @@ public class Network extends Thread {
         outBufferSemaphore.acquire();
 
         if (getOutBufferStatus().equals("full")) {
+            outBufferSemaphore.release();
+
             return false;
         }
 
@@ -480,6 +482,8 @@ public class Network extends Thread {
         inBufferSemaphore.acquire();
 
         if (getInBufferStatus().equals("empty")) {
+            inBufferSemaphore.release();
+
             return false;
         }
 
